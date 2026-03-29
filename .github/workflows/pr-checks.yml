@@ -1,0 +1,24 @@
+name: PR Checks
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  validate-pr-title:
+    name: Validate PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          # Expected format: SCRUM-### Short description
+          if echo "$PR_TITLE" | grep -qE '^SCRUM-[0-9]+ .+'; then
+            echo "PR title is valid: $PR_TITLE"
+          else
+            echo "ERROR: PR title does not follow the required format."
+            echo "Expected: SCRUM-### Short description of change"
+            echo "Got:      $PR_TITLE"
+            exit 1
+          fi
