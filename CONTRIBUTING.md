@@ -8,45 +8,50 @@ This document covers branching conventions, pull request process, and local deve
 
 ### Branch Naming
 
-All branches must be prefixed with the Jira ticket number followed by a short kebab-case description:
+All branches must follow this pattern:
 
 ```
-<TICKET-ID>-<short-description>
+<TICKET-ID>-<short-kebab-case-description>
 ```
 
-Examples:
-- `SCRUM-276-foundation-and-project-setup`
-- `SCRUM-301-loan-application-rest-api`
-- `SCRUM-315-document-upload-s3-integration`
+| Segment | Rules |
+|---|---|
+| `TICKET-ID` | Jira ticket ID in all caps, e.g. `SCRUM-301` |
+| `short-kebab-case-description` | Lowercase, words separated by hyphens, no spaces or special characters, 3–6 words max |
 
 ### Branch Types
 
-| Type | Pattern | Purpose |
+| Type | Pattern | Example |
 |---|---|---|
-| Feature | `SCRUM-###-<description>` | New feature work tied to a Jira story or task |
-| Bug fix | `SCRUM-###-fix-<description>` | Bug fixes tied to a Jira ticket |
-| Hotfix | `hotfix/<description>` | Critical production fixes (rare, requires lead approval) |
+| Epic | `SCRUM-###-<epic-description>` | `SCRUM-276-Foundation-and-Project-Setup` |
+| Story / task | `SCRUM-###-<description>` | `SCRUM-280-repository-folder-structure` |
+| Bug fix | `SCRUM-###-fix-<description>` | `SCRUM-318-fix-token-expiry-handling` |
+| Hotfix | `hotfix/<description>` | `hotfix/null-pointer-loan-status` |
 
-### Rules
+### Branching Rules
 
-- Branch from `main` unless explicitly told otherwise.
-- Keep branches short-lived. Merge or close them within the scope of the ticket.
-- Do not commit directly to `main`.
+- **Epic branches** are cut from `main`.
+- **Story and task branches** are cut from their parent epic branch.
+- Merge story/task branches back into the epic branch via PR.
+- The epic branch is merged into `main` when the epic is complete and approved.
+- Never commit directly to `main` or an epic branch.
+- One ticket per branch. Do not bundle unrelated tickets.
+- Keep branches short-lived — merge or close within the scope of the ticket.
+
+### Example Flow
+
+```
+main
+└── SCRUM-276-Foundation-and-Project-Setup        ← epic branch, cut from main
+    ├── SCRUM-280-repository-folder-structure      ← story branch, cut from epic
+    └── SCRUM-281-contribution-standards           ← story branch, cut from epic
+```
 
 ---
 
 ## Pull Request Process
 
-### Before Opening a PR
-
-- Ensure your branch is up to date with `main`.
-- Verify the service or module builds locally without errors.
-- Run any existing tests and confirm they pass.
-- Remove debug output, commented-out code, and TODO comments not tracked in Jira.
-
-### PR Title Format
-
-Use the Jira ticket ID as the prefix:
+### PR Title
 
 ```
 SCRUM-### Short description of change
@@ -54,23 +59,19 @@ SCRUM-### Short description of change
 
 Example: `SCRUM-301 Add loan application submission endpoint`
 
+The `.github/workflows/pr-checks.yml` action validates this format automatically on every PR open, edit, or push.
+
 ### PR Description
 
-Include:
-1. **What** — a brief summary of what changed.
-2. **Why** — the Jira ticket link or context for the change.
-3. **How to test** — steps a reviewer can use to verify the change locally.
+When you open a PR, GitHub will auto-populate the body from `.github/PULL_REQUEST_TEMPLATE.md`. Fill in the **What**, **Why**, and **How to Test** sections, then work through both checklists before requesting review.
 
-### Review Requirements
+### Merge Rules
 
-- At least one approval is required before merging.
-- Address all review comments or mark them as resolved with a reply before merging.
-- Squash commits on merge to keep `main` history clean.
-
-### Merge
-
-- Use **Squash and Merge** from GitHub.
-- The squash commit message should follow the PR title format above.
+- Minimum **one approval** required before merging.
+- All review comments must be resolved or replied to before merge.
+- Target the correct base branch: epic branch for story/task PRs, `main` for epic PRs.
+- Use **Squash and Merge**. The squash commit message must follow the PR title format.
+- Delete the branch after merge.
 
 ---
 
