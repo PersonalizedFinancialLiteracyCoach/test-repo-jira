@@ -1,5 +1,3 @@
-current-work-spec.md
-
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -35,5 +33,4 @@ build/
 .vscode/
 
 ### Environment Variables ###
-.env*
-!.env.example
+.env
