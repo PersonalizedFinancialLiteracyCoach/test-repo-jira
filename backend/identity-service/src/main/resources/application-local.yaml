@@ -1,0 +1,6 @@
+logging:
+  level:
+    com:
+      example:
+        identity: debug
+    root: info

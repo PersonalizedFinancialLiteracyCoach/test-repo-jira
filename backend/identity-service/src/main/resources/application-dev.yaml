@@ -1,0 +1,17 @@
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+logging:
+  level:
+    com:
+      example:
+        identity: debug
+    root: info
